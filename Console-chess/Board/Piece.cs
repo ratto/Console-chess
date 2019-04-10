@@ -12,9 +12,9 @@
 
         }
 
-        public Piece(Position position, Color color, GameBoard gameBoard)
+        public Piece(GameBoard gameBoard, Color color)
         {
-            this.position = position;
+            this.position = null;
             this.color = color;
             this.gameBoard = gameBoard;
             MoveCount = 0;

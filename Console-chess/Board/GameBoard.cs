@@ -21,5 +21,10 @@
         {
             return _pieces[line, column];
         }
+
+        public void placePiece(Piece p, Position pos)
+        {
+            _pieces[pos.Line, pos.Column] = p;
+        }
     }
 }
