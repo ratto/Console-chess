@@ -8,13 +8,20 @@ namespace Console_chess
     {
         static void Main(string[] args)
         {
-            GameBoard board = new GameBoard(8, 8);
+            try
+            {
+                GameBoard board = new GameBoard(8, 8);
 
-            board.placePiece(new Tower(board, Color.Black), new Position(0, 0));
-            board.placePiece(new Tower(board, Color.Black), new Position(1, 3));
-            board.placePiece(new King(board, Color.Black), new Position(2, 4));
+                board.placePiece(new Tower(board, Color.Black), new Position(0, 0));
+                board.placePiece(new Tower(board, Color.Black), new Position(1, 3));
+                board.placePiece(new King(board, Color.Black), new Position(2, 4));
 
-            View.PrintBoard(board);
+                View.PrintBoard(board);
+            }
+            catch (BoardException e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
     }
 }
