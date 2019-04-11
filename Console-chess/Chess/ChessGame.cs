@@ -11,34 +11,24 @@ namespace Chess
         public bool Finished { get; private set; }
         private HashSet<Piece> gamePieces;
         private HashSet<Piece> captured;
+        public bool Check { get; private set; }
 
         public ChessGame()
         {
             GameBoard = new GameBoard(8, 8);
             Turn = 1;
             CurrentPlayer = Color.White;
+            Check = false;
             Finished = false;
             gamePieces = new HashSet<Piece>();
             captured = new HashSet<Piece>();
             setGamePieces();
         }
 
-        public void ExecuteMove(Position origin, Position destiny)
-        {
-            Piece p = GameBoard.removePiece(origin);
-            p.incrementMoveCount();
-            Piece capturedPiece = GameBoard.removePiece(destiny);
-            GameBoard.placePiece(p, destiny);
-            if(capturedPiece != null)
-            {
-                captured.Add(capturedPiece);
-            }
-        }
-
         public HashSet<Piece> CapturedPiece(Color color)
         {
             HashSet<Piece> aux = new HashSet<Piece>();
-            foreach(Piece x in captured)
+            foreach (Piece x in captured)
             {
                 if (x.color == color)
                 {
@@ -46,6 +36,40 @@ namespace Chess
                 }
             }
             return aux;
+        }
+
+        private Color rival(Color color)
+        {
+            if (color == Color.Black) return Color.White;
+            else return Color.Black;
+        }
+
+        private Piece king(Color color)
+        {
+            foreach (Piece x in InGamePiece(color))
+            {
+                if (x is King)
+                {
+                    return x;
+                }
+            }
+            return null;
+        }
+
+        public bool KingInCheck(Color color)
+        {
+            Piece K = king(color);
+            if(K == null)
+            {
+                throw new BoardException("There is no " + color + " king on the game board!");
+            }
+
+            foreach(Piece x in InGamePiece(rival(color)))
+            {
+                bool[,] mat = x.possibleMove();
+                if (mat[K.position.Line, K.position.Column]) return true;
+            }
+            return false;
         }
 
         public HashSet<Piece> InGamePiece(Color color)
@@ -62,16 +86,57 @@ namespace Chess
             return aux;
         }
 
+        public Piece ExecuteMove(Position origin, Position destiny)
+        {
+            Piece p = GameBoard.removePiece(origin);
+            p.incrementMoveCount();
+            Piece capturedPiece = GameBoard.removePiece(destiny);
+            GameBoard.placePiece(p, destiny);
+            if (capturedPiece != null)
+            {
+                captured.Add(capturedPiece);
+            }
+            return capturedPiece;
+        }
+
+        public void UndoMove(Position origin, Position destiny, Piece capturedPiece)
+        {
+            Piece p = GameBoard.removePiece(destiny);
+            p.decrementMoveCount();
+            if(capturedPiece != null)
+            {
+                GameBoard.placePiece(capturedPiece, destiny);
+                captured.Remove(capturedPiece);
+            }
+            GameBoard.placePiece(p, origin);
+        }
+
         public void MakePlay(Position origin, Position destiny)
         {
-            ExecuteMove(origin, destiny);
+            Piece piece = ExecuteMove(origin, destiny);
+
+            if (KingInCheck(CurrentPlayer))
+            {
+                UndoMove(origin, destiny, piece);
+                throw new BoardException("You can't put yourself in check!");
+            }
+
+            if (KingInCheck(rival(CurrentPlayer)))
+            {
+                Check = true;
+            }
+            else
+            {
+                Check = false;
+            }
+
             Turn++;
             changePlayer();
         }
 
         public void testValidOrigin(Position pos)
         {
-            if(GameBoard.piece(pos) == null)
+            if (GameBoard.piece(pos) == null)
             {
                 throw new BoardException("There are no piece in that position.");
             }

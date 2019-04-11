@@ -25,6 +25,11 @@
             MoveCount++;
         }
 
+        public void decrementMoveCount()
+        {
+            MoveCount--;
+        }
+
         protected bool canMove(Position pos)
         {
             Piece p = gameBoard.piece(pos);
