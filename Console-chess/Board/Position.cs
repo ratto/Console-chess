@@ -15,6 +15,12 @@
             Column = column;
         }
 
+        public void definePosition(int line, int column)
+        {
+            Line = line;
+            Column = column;
+        }
+
         public override string ToString()
         {
             return Line

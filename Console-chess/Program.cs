@@ -22,8 +22,16 @@ namespace Console_chess
                     Console.Clear();
                     View.PrintBoard(game.GameBoard);
 
+                    Console.WriteLine();
                     Console.Write("Origin: ");
                     Position origin = View.getChessPosition().ToPosition();
+
+                    bool[,] possibleMove = game.GameBoard.piece(origin).possibleMove();
+
+                    Console.Clear();
+                    View.PrintBoard(game.GameBoard, possibleMove);
+
+                    Console.WriteLine();
                     Console.Write("Destiny: ");
                     Position destiny = View.getChessPosition().ToPosition();
 
