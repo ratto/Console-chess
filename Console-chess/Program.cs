@@ -10,18 +10,20 @@ namespace Console_chess
         {
             try
             {
-                ChessPosition pos = new ChessPosition('c', 8);
+/*                ChessPosition pos = new ChessPosition('c', 8);
 
                 Console.WriteLine(pos);
-                Console.WriteLine(pos.ToPosition());
+                Console.WriteLine(pos.ToPosition()); */
 
- /*               GameBoard board = new GameBoard(8, 8);
+                GameBoard board = new GameBoard(8, 8);
 
                 board.placePiece(new Tower(board, Color.Black), new Position(0, 0));
                 board.placePiece(new Tower(board, Color.Black), new Position(1, 3));
                 board.placePiece(new King(board, Color.Black), new Position(2, 4));
 
-                View.PrintBoard(board); */
+                board.placePiece(new Tower(board, Color.White), new Position(3, 5));
+
+                View.PrintBoard(board); 
             }
             catch (BoardException e)
             {
