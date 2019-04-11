@@ -17,11 +17,8 @@ namespace Console_chess
                     try
                     {
                         Console.Clear();
-                        View.PrintBoard(game.GameBoard);
 
-                        Console.WriteLine();
-                        Console.WriteLine("Turn: " + game.Turn);
-                        Console.WriteLine("Waiting {0} player move...", game.CurrentPlayer);
+                        View.PrintGame(game);
 
                         Console.WriteLine();
                         Console.Write("Origin: ");
