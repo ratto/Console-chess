@@ -69,7 +69,7 @@
         {
             if (!testValidPosition(pos))
             {
-                throw new BoardException("This is not a valid position!");
+                throw new BoardException("Invalid position!");
             }
 
         }

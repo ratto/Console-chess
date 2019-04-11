@@ -6,7 +6,6 @@ namespace Board
     {
         public BoardException(string msg): base(msg)
         {
-
         }
     }
 }

@@ -31,6 +31,27 @@
             return p == null || p.color != color;
         }
 
+        public bool testPossibleMoves()
+        {
+            bool[,] mat = possibleMove();
+            for (int i = 0; i < gameBoard.Lines; i++)
+            {
+                for (int j=0; j< gameBoard.Columns; j++)
+                {
+                    if (mat[i, j])
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool canMoveTo(Position pos)
+        {
+            return possibleMove()[pos.Line, pos.Column];
+        }
+
         public abstract bool[,] possibleMove();
     }
 }
