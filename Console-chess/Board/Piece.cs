@@ -19,5 +19,10 @@
             this.gameBoard = gameBoard;
             MoveCount = 0;
         }
+
+        public void incrementMoveCount()
+        {
+            MoveCount++;
+        }
     }
 }

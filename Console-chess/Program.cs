@@ -10,20 +10,27 @@ namespace Console_chess
         {
             try
             {
-/*                ChessPosition pos = new ChessPosition('c', 8);
+                /*                ChessPosition pos = new ChessPosition('c', 8);
 
-                Console.WriteLine(pos);
-                Console.WriteLine(pos.ToPosition()); */
+                                Console.WriteLine(pos);
+                                Console.WriteLine(pos.ToPosition()); */
 
-                GameBoard board = new GameBoard(8, 8);
+                ChessGame game = new ChessGame();
 
-                board.placePiece(new Tower(board, Color.Black), new Position(0, 0));
-                board.placePiece(new Tower(board, Color.Black), new Position(1, 3));
-                board.placePiece(new King(board, Color.Black), new Position(2, 4));
+                while (!game.Finished)
+                {
+                    Console.Clear();
+                    View.PrintBoard(game.GameBoard);
 
-                board.placePiece(new Tower(board, Color.White), new Position(3, 5));
+                    Console.Write("Origin: ");
+                    Position origin = View.getChessPosition().ToPosition();
+                    Console.Write("Destiny: ");
+                    Position destiny = View.getChessPosition().ToPosition();
 
-                View.PrintBoard(board); 
+                    game.ExecuteMove(origin, destiny);
+                }
+
+                View.PrintBoard(game.GameBoard); 
             }
             catch (BoardException e)
             {

@@ -37,6 +37,18 @@
             p.position = pos;
         }
 
+        public Piece removePiece(Position pos)
+        {
+            if (piece(pos) == null)
+            {
+                return null;
+            }
+            Piece aux = piece(pos);
+            aux.position = null;
+            _pieces[pos.Line, pos.Column] = null;
+            return aux;
+        }
+
         public bool testExistPiece(Position pos)
         {
             testValidPosition(pos);
