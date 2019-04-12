@@ -43,8 +43,6 @@ namespace Console_chess
                         Console.ReadLine();
                     }
                 }
-                Console.Clear();
-                View.PrintGame(game);
             }
             catch (BoardException e)
             {
