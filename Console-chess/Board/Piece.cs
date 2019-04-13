@@ -30,12 +30,6 @@
             MoveCount--;
         }
 
-        protected bool canMove(Position pos)
-        {
-            Piece p = gameBoard.piece(pos);
-            return p == null || p.color != color;
-        }
-
         public bool testPossibleMoves()
         {
             bool[,] mat = possibleMove();

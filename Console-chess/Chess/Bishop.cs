@@ -2,9 +2,9 @@
 
 namespace Chess
 {
-    class Tower : Piece
+    class Bishop : Piece
     {
-        public Tower(GameBoard board, Color color) : base(board, color)
+        public Bishop(GameBoard board, Color color) : base(board, color)
         {
         }
 
@@ -16,7 +16,7 @@ namespace Chess
 
         public override string ToString()
         {
-            return "T";
+            return "B";
         }
 
         public override bool[,] possibleMove()
@@ -25,8 +25,8 @@ namespace Chess
 
             Position pos = new Position(0, 0);
 
-            //above
-            pos.definePosition(position.Line - 1, position.Column);
+            // right + above
+            pos.definePosition(position.Line - 1, position.Column + 1);
             while (gameBoard.testValidPosition(pos) && canMove(pos))
             {
                 mat[pos.Line, pos.Column] = true;
@@ -35,10 +35,11 @@ namespace Chess
                     break;
                 }
                 pos.Line--;
+                pos.Column++;
             }
 
-            //below
-            pos.definePosition(position.Line + 1, position.Column);
+            //right + below
+            pos.definePosition(position.Line + 1, position.Column + 1);
             while (gameBoard.testValidPosition(pos) && canMove(pos))
             {
                 mat[pos.Line, pos.Column] = true;
@@ -47,10 +48,11 @@ namespace Chess
                     break;
                 }
                 pos.Line++;
+                pos.Column++;
             }
 
-            //left
-            pos.definePosition(position.Line, position.Column - 1);
+            //left + below
+            pos.definePosition(position.Line + 1, position.Column - 1);
             while (gameBoard.testValidPosition(pos) && canMove(pos))
             {
                 mat[pos.Line, pos.Column] = true;
@@ -58,11 +60,12 @@ namespace Chess
                 {
                     break;
                 }
+                pos.Line++;
                 pos.Column--;
             }
 
-            //right
-            pos.definePosition(position.Line, position.Column + 1);
+            //left + above
+            pos.definePosition(position.Line - 1, position.Column - 1);
             while (gameBoard.testValidPosition(pos) && canMove(pos))
             {
                 mat[pos.Line, pos.Column] = true;
@@ -70,7 +73,8 @@ namespace Chess
                 {
                     break;
                 }
-                pos.Column++;
+                pos.Line--;
+                pos.Column--;
             }
 
             return mat;
