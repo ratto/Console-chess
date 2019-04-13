@@ -59,17 +59,48 @@ namespace Chess
         public bool KingInCheck(Color color)
         {
             Piece K = king(color);
-            if(K == null)
+            if (K == null)
             {
                 throw new BoardException("There is no " + color + " king on the game board!");
             }
 
-            foreach(Piece x in InGamePiece(rival(color)))
+            foreach (Piece x in InGamePiece(rival(color)))
             {
                 bool[,] mat = x.possibleMove();
                 if (mat[K.position.Line, K.position.Column]) return true;
             }
             return false;
+        }
+
+        public bool testCheckMate(Color color)
+        {
+            if (!KingInCheck(color))
+            {
+                return false;
+            }
+            foreach (Piece x in InGamePiece(color))
+            {
+                bool[,] mat = x.possibleMove();
+                for (int i = 0; i < GameBoard.Lines; i++)
+                {
+                    for (int j = 0; j < GameBoard.Columns; j++)
+                    {
+                        if (mat[i, j])
+                        {
+                            Position origin = x.position;
+                            Position destiny = new Position(i, j);
+                            Piece capturedPiece = ExecuteMove(origin, destiny);
+                            bool testCheck = KingInCheck(color);
+                            UndoMove(origin, destiny, capturedPiece);
+                            if (!testCheck)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
         }
 
         public HashSet<Piece> InGamePiece(Color color)
@@ -103,7 +134,7 @@ namespace Chess
         {
             Piece p = GameBoard.removePiece(destiny);
             p.decrementMoveCount();
-            if(capturedPiece != null)
+            if (capturedPiece != null)
             {
                 GameBoard.placePiece(capturedPiece, destiny);
                 captured.Remove(capturedPiece);
@@ -130,8 +161,15 @@ namespace Chess
                 Check = false;
             }
 
-            Turn++;
-            changePlayer();
+            if (testCheckMate(rival(CurrentPlayer)))
+            {
+                Finished = true;
+            }
+            else
+            {
+                Turn++;
+                changePlayer();
+            }
         }
 
         public void testValidOrigin(Position pos)
