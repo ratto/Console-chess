@@ -2,9 +2,9 @@
 
 namespace Chess
 {
-    class Tower : Piece
+    class Rook : Piece
     {
-        public Tower(GameBoard board, Color color) : base(board, color)
+        public Rook(GameBoard board, Color color) : base(board, color)
         {
         }
 

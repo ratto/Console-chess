@@ -2,9 +2,9 @@
 
 namespace Chess
 {
-    class Horse : Piece
+    class Knight : Piece
     {
-        public Horse(GameBoard board, Color color) : base(board, color)
+        public Knight(GameBoard board, Color color) : base(board, color)
         {
         }
 

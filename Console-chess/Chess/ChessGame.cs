@@ -127,6 +127,27 @@ namespace Chess
             {
                 captured.Add(capturedPiece);
             }
+
+            // execute short King's Indian Defense
+            if (p is King && destiny.Column == origin.Column + 2)
+            {
+                Position originRook = new Position(origin.Line, origin.Column + 3);
+                Position destinyRook = new Position(origin.Line, origin.Column + 1);
+                Piece rook = GameBoard.removePiece(originRook);
+                rook.incrementMoveCount();
+                GameBoard.placePiece(rook, destinyRook);
+            }
+
+            // execute long King's Indian Defense
+            if (p is King && destiny.Column == origin.Column - 2)
+            {
+                Position originRook = new Position(origin.Line, origin.Column - 4);
+                Position destinyRook = new Position(origin.Line, origin.Column - 1);
+                Piece rook = GameBoard.removePiece(originRook);
+                rook.incrementMoveCount();
+                GameBoard.placePiece(rook, destinyRook);
+            }
+
             return capturedPiece;
         }
 
@@ -140,6 +161,26 @@ namespace Chess
                 captured.Remove(capturedPiece);
             }
             GameBoard.placePiece(p, origin);
+
+            // undo short King's Indian Defense
+            if (p is King && destiny.Column == origin.Column + 2)
+            {
+                Position originRook = new Position(origin.Line, origin.Column + 3);
+                Position destinyRook = new Position(origin.Line, origin.Column + 1);
+                Piece rook = GameBoard.removePiece(destinyRook);
+                rook.decrementMoveCount();
+                GameBoard.placePiece(rook, originRook);
+            }
+
+            // execute long King's Indian Defense
+            if (p is King && destiny.Column == origin.Column - 2)
+            {
+                Position originRook = new Position(origin.Line, origin.Column - 4);
+                Position destinyRook = new Position(origin.Line, origin.Column - 1);
+                Piece rook = GameBoard.removePiece(destinyRook);
+                rook.decrementMoveCount();
+                GameBoard.placePiece(rook, originRook);
+            }
         }
 
         public void MakePlay(Position origin, Position destiny)
@@ -211,14 +252,14 @@ namespace Chess
         public void setGamePieces()
         {
             // blacks
-            placeNewPiece('a', 8, new Tower(GameBoard, Color.Black));
-            placeNewPiece('b', 8, new Horse(GameBoard, Color.Black));
+            placeNewPiece('a', 8, new Rook(GameBoard, Color.Black));
+            placeNewPiece('b', 8, new Knight(GameBoard, Color.Black));
             placeNewPiece('c', 8, new Bishop(GameBoard, Color.Black));
             placeNewPiece('d', 8, new Queen(GameBoard, Color.Black));
-            placeNewPiece('e', 8, new King(GameBoard, Color.Black));
+            placeNewPiece('e', 8, new King(GameBoard, Color.Black, this));
             placeNewPiece('f', 8, new Bishop(GameBoard, Color.Black));
-            placeNewPiece('g', 8, new Horse(GameBoard, Color.Black));
-            placeNewPiece('h', 8, new Tower(GameBoard, Color.Black));
+            placeNewPiece('g', 8, new Knight(GameBoard, Color.Black));
+            placeNewPiece('h', 8, new Rook(GameBoard, Color.Black));
 
             placeNewPiece('a', 7, new Pawn(GameBoard, Color.Black));
             placeNewPiece('b', 7, new Pawn(GameBoard, Color.Black));
@@ -230,14 +271,14 @@ namespace Chess
             placeNewPiece('h', 7, new Pawn(GameBoard, Color.Black));
 
             // whites
-            placeNewPiece('a', 1, new Tower(GameBoard, Color.White));
-            placeNewPiece('b', 1, new Horse(GameBoard, Color.White));
+            placeNewPiece('a', 1, new Rook(GameBoard, Color.White));
+            placeNewPiece('b', 1, new Knight(GameBoard, Color.White));
             placeNewPiece('c', 1, new Bishop(GameBoard, Color.White));
             placeNewPiece('d', 1, new Queen(GameBoard, Color.White));
-            placeNewPiece('e', 1, new King(GameBoard, Color.White));
+            placeNewPiece('e', 1, new King(GameBoard, Color.White, this));
             placeNewPiece('f', 1, new Bishop(GameBoard, Color.White));
-            placeNewPiece('g', 1, new Horse(GameBoard, Color.White));
-            placeNewPiece('h', 1, new Tower(GameBoard, Color.White));
+            placeNewPiece('g', 1, new Knight(GameBoard, Color.White));
+            placeNewPiece('h', 1, new Rook(GameBoard, Color.White));
 
             placeNewPiece('a', 2, new Pawn(GameBoard, Color.White));
             placeNewPiece('b', 2, new Pawn(GameBoard, Color.White));

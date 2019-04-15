@@ -4,14 +4,23 @@ namespace Chess
 {
     class King : Piece
     {
-        public King(GameBoard board, Color color) : base(board, color)
+        private ChessGame game;
+
+        public King(GameBoard board, Color color, ChessGame game) : base(board, color)
         {
+            this.game = game;
         }
 
         private bool canMove(Position pos)
         {
             Piece p = gameBoard.piece(pos);
             return p == null || p.color != color;
+        }
+
+        private bool testRookForKID(Position pos) // test if the rook is able to make the King's Indian Defense special move
+        {
+            Piece p = gameBoard.piece(pos);
+            return p != null && p is Rook && p.color == color && p.MoveCount == 0;
         }
 
         public override string ToString()
@@ -56,6 +65,37 @@ namespace Chess
             // left + below
             pos.definePosition(position.Line + 1, position.Column - 1);
             if (gameBoard.testValidPosition(pos) && canMove(pos)) mat[pos.Line, pos.Column] = true;
+
+            // Special move: King's Indian Defense
+            if (MoveCount == 0 && !game.Check)
+            {
+                // Short KID special move
+                Position posRook1 = new Position(position.Line, position.Column + 3);
+
+                if (testRookForKID(posRook1))
+                {
+                    Position p1 = new Position(position.Line, position.Column + 1);
+                    Position p2 = new Position(position.Line, position.Column + 2);
+                    if (gameBoard.piece(p1) == null && gameBoard.piece(p2) == null)
+                    {
+                        mat[position.Line, position.Column + 2] = true;
+                    }
+                }
+
+                // Long KID special move
+                Position posRook2 = new Position(position.Line, position.Column - 4);
+
+                if (testRookForKID(posRook2))
+                {
+                    Position p1 = new Position(position.Line, position.Column - 1);
+                    Position p2 = new Position(position.Line, position.Column - 2);
+                    Position p3 = new Position(position.Line, position.Column - 3);
+                    if (gameBoard.piece(p1) == null && gameBoard.piece(p2) == null && gameBoard.piece(p3) == null)
+                    {
+                        mat[position.Line, position.Column - 2] = true;
+                    }
+                }
+            }
 
             return mat;
         }
