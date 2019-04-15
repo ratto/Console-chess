@@ -12,6 +12,7 @@ namespace Chess
         private HashSet<Piece> gamePieces;
         private HashSet<Piece> captured;
         public bool Check { get; private set; }
+        public Piece enPassantDanger { get; private set; }
 
         public ChessGame()
         {
@@ -22,6 +23,7 @@ namespace Chess
             Finished = false;
             gamePieces = new HashSet<Piece>();
             captured = new HashSet<Piece>();
+            enPassantDanger = null;
             setGamePieces();
         }
 
@@ -128,7 +130,7 @@ namespace Chess
                 captured.Add(capturedPiece);
             }
 
-            // execute short King's Indian Defense
+            // #specialmove short King's Indian Defense
             if (p is King && destiny.Column == origin.Column + 2)
             {
                 Position originRook = new Position(origin.Line, origin.Column + 3);
@@ -138,7 +140,7 @@ namespace Chess
                 GameBoard.placePiece(rook, destinyRook);
             }
 
-            // execute long King's Indian Defense
+            // #specialmove long King's Indian Defense
             if (p is King && destiny.Column == origin.Column - 2)
             {
                 Position originRook = new Position(origin.Line, origin.Column - 4);
@@ -146,6 +148,26 @@ namespace Chess
                 Piece rook = GameBoard.removePiece(originRook);
                 rook.incrementMoveCount();
                 GameBoard.placePiece(rook, destinyRook);
+            }
+
+            // #specialmove En Passant
+            if(p is Pawn)
+            {
+                if(origin.Column != destiny.Column && capturedPiece == null)
+                {
+                    Position posPawn;
+                    if(p.color == Color.White)
+                    {
+                        posPawn = new Position(destiny.Line + 1, destiny.Column);
+                    }
+                    else
+                    {
+                        posPawn = new Position(destiny.Line - 1, destiny.Column);
+                    }
+
+                    capturedPiece = GameBoard.removePiece(posPawn);
+                    captured.Add(capturedPiece);
+                }
             }
 
             return capturedPiece;
@@ -162,7 +184,7 @@ namespace Chess
             }
             GameBoard.placePiece(p, origin);
 
-            // undo short King's Indian Defense
+            // #specialmove short King's Indian Defense
             if (p is King && destiny.Column == origin.Column + 2)
             {
                 Position originRook = new Position(origin.Line, origin.Column + 3);
@@ -172,7 +194,7 @@ namespace Chess
                 GameBoard.placePiece(rook, originRook);
             }
 
-            // execute long King's Indian Defense
+            // #specialmove long King's Indian Defense
             if (p is King && destiny.Column == origin.Column - 2)
             {
                 Position originRook = new Position(origin.Line, origin.Column - 4);
@@ -180,6 +202,25 @@ namespace Chess
                 Piece rook = GameBoard.removePiece(destinyRook);
                 rook.decrementMoveCount();
                 GameBoard.placePiece(rook, originRook);
+            }
+
+            // #specialmove En Passant
+            if(p is Pawn)
+            {
+                if(origin.Column != destiny.Column && capturedPiece == enPassantDanger)
+                {
+                    Piece pawn = GameBoard.removePiece(destiny);
+                    Position posPawn;
+                    if(p.color == Color.White)
+                    {
+                        posPawn = new Position(3, destiny.Column);
+                    }
+                    else
+                    {
+                        posPawn = new Position(4, destiny.Column);
+                    }
+                    GameBoard.placePiece(pawn, posPawn);
+                }
             }
         }
 
@@ -210,6 +251,18 @@ namespace Chess
             {
                 Turn++;
                 changePlayer();
+            }
+
+            Piece p = GameBoard.piece(destiny);
+
+            // #specialmove En Passant
+            if(p is Pawn && (destiny.Line == origin.Line + 2 || destiny.Line == origin.Line - 2))
+            {
+                enPassantDanger = p;
+            }
+            else
+            {
+                enPassantDanger = null;
             }
         }
 
@@ -261,14 +314,14 @@ namespace Chess
             placeNewPiece('g', 8, new Knight(GameBoard, Color.Black));
             placeNewPiece('h', 8, new Rook(GameBoard, Color.Black));
 
-            placeNewPiece('a', 7, new Pawn(GameBoard, Color.Black));
-            placeNewPiece('b', 7, new Pawn(GameBoard, Color.Black));
-            placeNewPiece('c', 7, new Pawn(GameBoard, Color.Black));
-            placeNewPiece('d', 7, new Pawn(GameBoard, Color.Black));
-            placeNewPiece('e', 7, new Pawn(GameBoard, Color.Black));
-            placeNewPiece('f', 7, new Pawn(GameBoard, Color.Black));
-            placeNewPiece('g', 7, new Pawn(GameBoard, Color.Black));
-            placeNewPiece('h', 7, new Pawn(GameBoard, Color.Black));
+            placeNewPiece('a', 7, new Pawn(GameBoard, Color.Black, this));
+            placeNewPiece('b', 7, new Pawn(GameBoard, Color.Black, this));
+            placeNewPiece('c', 7, new Pawn(GameBoard, Color.Black, this));
+            placeNewPiece('d', 7, new Pawn(GameBoard, Color.Black, this));
+            placeNewPiece('e', 7, new Pawn(GameBoard, Color.Black, this));
+            placeNewPiece('f', 7, new Pawn(GameBoard, Color.Black, this));
+            placeNewPiece('g', 7, new Pawn(GameBoard, Color.Black, this));
+            placeNewPiece('h', 7, new Pawn(GameBoard, Color.Black, this));
 
             // whites
             placeNewPiece('a', 1, new Rook(GameBoard, Color.White));
@@ -280,14 +333,14 @@ namespace Chess
             placeNewPiece('g', 1, new Knight(GameBoard, Color.White));
             placeNewPiece('h', 1, new Rook(GameBoard, Color.White));
 
-            placeNewPiece('a', 2, new Pawn(GameBoard, Color.White));
-            placeNewPiece('b', 2, new Pawn(GameBoard, Color.White));
-            placeNewPiece('c', 2, new Pawn(GameBoard, Color.White));
-            placeNewPiece('d', 2, new Pawn(GameBoard, Color.White));
-            placeNewPiece('e', 2, new Pawn(GameBoard, Color.White));
-            placeNewPiece('f', 2, new Pawn(GameBoard, Color.White));
-            placeNewPiece('g', 2, new Pawn(GameBoard, Color.White));
-            placeNewPiece('h', 2, new Pawn(GameBoard, Color.White));
+            placeNewPiece('a', 2, new Pawn(GameBoard, Color.White, this));
+            placeNewPiece('b', 2, new Pawn(GameBoard, Color.White, this));
+            placeNewPiece('c', 2, new Pawn(GameBoard, Color.White, this));
+            placeNewPiece('d', 2, new Pawn(GameBoard, Color.White, this));
+            placeNewPiece('e', 2, new Pawn(GameBoard, Color.White, this));
+            placeNewPiece('f', 2, new Pawn(GameBoard, Color.White, this));
+            placeNewPiece('g', 2, new Pawn(GameBoard, Color.White, this));
+            placeNewPiece('h', 2, new Pawn(GameBoard, Color.White, this));
         }
     }
 }

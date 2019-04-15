@@ -66,7 +66,7 @@ namespace Chess
             pos.definePosition(position.Line + 1, position.Column - 1);
             if (gameBoard.testValidPosition(pos) && canMove(pos)) mat[pos.Line, pos.Column] = true;
 
-            // Special move: King's Indian Defense
+            // #specialmove King's Indian Defense
             if (MoveCount == 0 && !game.Check)
             {
                 // Short KID special move
